@@ -1,0 +1,165 @@
+#WainoExplorer {
+    position: relative; /* To allow absolute positioning within this container */
+    height: calc(100vh - 80px);
+    width: 100%;
+
+    .background-blur {
+        /* Apply the background image and blur */
+        background-image: url('https://images.unsplash.com/photo-1612279621492-4f2d14579d19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top 55% right 0;
+        height: 100%;
+        width: 100%;
+        filter: blur(2px); /* Apply the blur effect */
+        position: absolute; /* Position it absolutely within the container */
+        top: 0;
+        left: 0;
+        z-index: 0; /* Put it behind other content */
+      }
+      
+      .insideContent {
+        position: relative;  /* So it can be positioned within the container */
+        z-index : 1;         /* Put it on top of the blurred background */
+        height  : 100%;
+      }
+
+
+      .detailsSection{
+        box-shadow      : rgba(0, 0, 0, 0.1) 0px 4px 12px;
+        padding         : 30px 24px;
+        background-color: white;
+        border-radius   : 6px;
+        width: 28%;
+      }
+
+
+      .ellipses {
+        width: 100%;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #ListingComponent{
+        padding: 0px 80px;
+
+        .card{
+          min-height: 210px;
+          max-height: 210px;
+          border: 0px;
+          overflow: hidden;
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        }
+
+        .rightSection{
+          width: 55%;
+        }
+
+        .filterAppliedBox{
+          display: none;
+        }
+
+        .filterTitle{
+          border-color: #1E1E1E;
+          border-style: solid;
+          width: fit-content;
+          border-width: 1px;
+          border-radius: 80px;
+          padding: 10px 24px;
+          margin-top: 24px;
+          display: none;
+        }
+
+        .leftSection{
+          width: 40%;
+          display: block !important;
+        }
+
+        .priceSection{
+          background-color: #00845F;
+          padding         : 6px 24px;
+          color           : white;
+          position        : absolute;
+          top             : 0px;
+          right           : 0px;
+        }
+
+        .leftSection{
+          padding: 0px 32px 0px 0px;
+        }
+
+        .price{
+          border-radius: 24px;
+          outline      : 1px solid #aaa;
+          border       : 0px;
+          padding      : 8px 32px;
+          margin-top   : 8px;
+          margin-right : 8px;
+          color        : black;
+          transition: ease 0.4s;
+          background-color: white;
+          text-transform: capitalize;
+        }
+        
+        .selected{
+          background-color: red !important;
+          color: white !important; 
+        }
+      }
+  }
+  
+
+  @media screen and (max-width: 600px) {
+    #WainoExplorer{
+    height: calc(100vh);
+      .background-blur {
+        background-position: top !important;
+      }
+
+      #ListingComponent{
+        padding: 0px 24px;
+
+        .filterTitle{
+          display: block !important;
+        }
+
+        .leftSection{
+          display: none !important;
+        }
+
+        .filterAppliedBox{
+          display: block !important;
+          position: fixed;
+          left: 0px;
+          top: 0px;
+          background-color: white;
+          width: 100%;
+          height: 100vh;
+          z-index: 1000;
+          overflow-y: scroll;
+          padding: 24px !important;
+        }
+
+        .card{
+          max-height: 455px !important;
+
+          img{
+            height: 150px !important;
+          }
+        }
+
+        
+        .rightSection {
+          width: 100% !important;
+        }
+      }
+
+      .detailsSection{
+        width: 90%;
+      }
+    }
+  }
+  
+  
