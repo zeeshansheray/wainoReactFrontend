@@ -403,32 +403,35 @@ const ListingComponent = ({state, setState}) => {
             and grape {filters.grape.length > 0 ? filters.grape.join(', ') : 'any'}.
         </h3>
         )}
-        <div className='filterTitle Heading18M' onClick={()=>setState({...state, smallScreenFilter : !state.smallScreenFilter})}>
-          Filters
-        </div>
-        <div className='d-flex mt_40 space-between'>
-            <div className={`leftSection ${state.smallScreenFilter && 'filterAppliedBox'}`}>
-            <div className='d-flex space-between'>
+        <div className='mt_24'>
+          <div className='filterTitle Heading18M' onClick={()=>setState({...state, smallScreenFilter : !state.smallScreenFilter})}>
+            Filters
+          </div>
+          <div className='searchBox'>
               <h2 className='Heading22B'>
                 Search Wine
               </h2>
-              {state.smallScreenFilter &&
-              <div onClick={()=>setState({...state, smallScreenFilter : false})}>
-                <SvgIcons.CloseIcon color={ColorScheme.ColorSchemeCode.black}/>
-              </div>}
-            </div>
-
             <TextField 
              variant="standard"
-             className='w-100'
+             className='w-40 pr_32 searchField'
              onChange={(e)=>handleNameChange(e)}
              value = {filters.wineName}
             />
+          </div>
+        </div>
+
+        
+        <div className='d-flex space-between'>
+            <div className={`leftSection ${state.smallScreenFilter && 'filterAppliedBox'}`}>
 
             <div className='d-flex space-between'>
               <h2 className='Heading22B mt_32'>
                 Seller Name
               </h2>
+              {state.smallScreenFilter &&
+              <div onClick={()=>setState({...state, smallScreenFilter : false})}>
+                <SvgIcons.CloseIcon color={ColorScheme.ColorSchemeCode.black}/>
+              </div>}
             </div>
             <Autocomplete
               multiple  // Allow multiple selections
