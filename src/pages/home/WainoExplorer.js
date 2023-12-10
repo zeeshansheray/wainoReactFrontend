@@ -2,13 +2,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { LayoutContext } from '../../context/layout.context'
 
 import {PngIcons, SvgIcons} from '../../icons'
-import CustomTextField from '../../components/CustomTextField'
-import CustomButton from '../../components/CustomButton'
-import { useFormik } from 'formik'
-import { AuthVld } from '../../validation'
 import AuthService from '../../services/Auth'
 import CircularProgress from '@mui/material/CircularProgress';
-import localforage from 'localforage'
 
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,21 +11,18 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Slider from '@mui/material/Slider';
 import { ColorScheme } from '../../enums'
 import { Link } from 'react-router-dom'
+import { DeleteOutline, Visibility } from '@mui/icons-material'
+import CustomButton from './../../components/CustomButton';
 
 export default function WainoExplorer() {
   const layout = useContext(LayoutContext)
   const [state, setState] = useState({
     loader    : false,
     mainLoader: true,
-    isLoggedIn: false,
     fetchedData : [],
     smallScreenFilter: false,
   })
-  const initValues = {
-    firstName: '',
-    lastName : '',
-    email    : '',
-  }
+
 
   useEffect(()=>{
     layout.setLayout({
@@ -40,27 +32,6 @@ export default function WainoExplorer() {
   },[])
 
 
-  const handleSubmitFunc = async() => {
-    setState({...state, loader : true})
-    let payload = {...formik.values}
-
-    const {response,error} = await AuthService.Login({payload});
-
-    if(response.data){
-      await localforage.setItem('email', formik.values.email)
-      setState({...state, loader : false, isLoggedIn : true})
-    }
-    else{
-      setState({...state, loader : false})
-    }
-
-  }
-
-  const formik = useFormik({
-    validationSchema: AuthVld.LoginVld,
-    initialValues : {...initValues}
-  })
-
   const onLoadFunc = async() => {
         const {response , error} = await AuthService.FetchData();
         let filteredData = [];
@@ -69,14 +40,7 @@ export default function WainoExplorer() {
         }
 
         console.log('filteredData ', filteredData)
-
-        let loggedIn = await localforage.getItem('email');
-        if(loggedIn){
-          setState({...state, isLoggedIn : true, mainLoader : false, fetchedData : filteredData})
-        }
-        else{
-          setState({...state, isLoggedIn : false, mainLoader : false, fetchedData : filteredData})
-        }
+        setState({...state, mainLoader : false, fetchedData : filteredData})
   }
 
   function sortByRating(data) {
@@ -114,84 +78,13 @@ export default function WainoExplorer() {
   return (
     <div id="WainoExplorer">
         {state.mainLoader ? 
-
-       <div className='absoluteMiddle'>
-         <CircularProgress/> 
-       </div>:
         
-        state.isLoggedIn 
-
-        ?
-
+        <div className="absoluteMiddle">
+         <CircularProgress/> 
+        </div>
+         :
         <ListingComponent state={state}  setState={setState}/>
-
-        :
-        <>
-          <div className='background-blur'></div>
-          <div className='insideContent middle'>
-            <div className='detailsSection'>
-              <div className='text-center'>
-                <SvgIcons.LockIcon/>
-              </div>
-              <h2 className='mt_8 Heading30B color-black text-center w-100'>
-                  Waino
-              </h2>
-              <p className='color-black Caption14M w-100 text-center'>Please enter your details below to continue</p>
-              <div className='w-100 mt_10'>
-                <CustomTextField 
-                  label = {"First Name*"}
-                  name  = "firstName"
-                  onChange= {formik.handleChange}
-                  value ={formik.values.firstName}
-                  error        = {formik.errors.firstName}
-                  helperText   = {
-                    formik.errors.firstName
-                      ? formik.errors.firstName
-                      : ""
-                  }
-                />
-              </div>
-              <div className='w-100 mt_10'>
-                <CustomTextField 
-                  label={"Last Name"}
-                  name  = "lastName"
-                  onChange= {formik.handleChange}
-                  value ={formik.values.lastName}
-                  error        = {formik.errors.lastName}
-                  helperText   = {
-                    formik.errors.lastName
-                      ? formik.errors.lastName
-                      : ""
-                  }
-                />
-              </div>
-              <div className='w-100 mt_10'>
-                <CustomTextField 
-                  label = {"Email*"}
-                  name  = "email"
-                  onChange= {formik.handleChange}
-                  value ={formik.values.email}
-                  error        = {formik.errors.email}
-                  helperText   = {
-                    formik.errors.email
-                      ? formik.errors.email
-                      : ""
-                  }
-                />
-              </div>
-              <div className='w-100 mt_24 mb_24'>
-                <CustomButton 
-                  btntext   = {"Continue"}
-                  className = {"w-100"}
-                  disabled  = {!formik.values.email || !formik.values.firstName}
-                  onClick   = {handleSubmitFunc}
-                  icon={state.loader &&<CircularProgress />}
-                />
-              </div>
-            </div>
-          </div> 
-        </>
-      } 
+        }
     </div>
   )
 }
@@ -219,43 +112,8 @@ const ListingComponent = ({state, setState}) => {
     return uniqueNames;
   };
 
-  // Get unique winery names
   const uniqueWineryNames = getUniqueWineryNames(state.fetchedData);
 
-  const getUniqueCountryNames = (data) => {
-    const uniqueNames = [];
-    data.forEach((wine) => {
-      if (!uniqueNames.includes(wine.country)) {
-        uniqueNames.push(wine.country);
-      }
-    });
-    return uniqueNames;
-  };
-
-  // Get unique winery names
-  const uniqueCountryNames = getUniqueCountryNames(state.fetchedData);
-  
-  const getUniqueGrapeNames = (data) => {
-    const uniqueNames = new Set();
-  
-    data.forEach((wine) => {
-      const grapes = wine.grape.toLowerCase().split(',').map((grape) => grape.trim());
-      grapes.forEach((grape) => {
-        if (grape) {
-          uniqueNames.add(grape);
-        }
-      });
-    });
-  
-    const sortedUniqueNames = [...uniqueNames].sort((a, b) => a.localeCompare(b));
-  
-    return sortedUniqueNames;
-  };
-
-  // Get unique winery names
-  const uniqueGrapeNames = getUniqueGrapeNames(state.fetchedData);
-  
-  
   const handleChangePrice = (priceRange) => {
     const index = filters.priceRange.findIndex(
       ([minPrice, maxPrice]) =>
@@ -276,13 +134,18 @@ const ListingComponent = ({state, setState}) => {
 
   const handleNameChange = (e) => {
     setFilters({ ...filters, wineName : e.target.value });
-
-    let filteredData = state.fetchedData;
-    filteredData = state.fetchedData.filter((wine)=>{
+    if(e.target.value == ""){
+      applyFiltersFunction();
+    }
+    else{
+    let filteredData = filteredWines;
+    console.log('filteredData ', filteredData)
+    filteredData = filteredData.filter((wine)=>{
       return wine.wine_name.toLowerCase().includes(e.target.value.toLowerCase())
     })
-
     setFilteredWines(filteredData);
+  }
+   
   }
   
 
@@ -300,54 +163,65 @@ const ListingComponent = ({state, setState}) => {
     { label: '100-500', value: [100, 500] },
   ];
 
-  useEffect(() => {
+  const applyFiltersFunction = ()  => {
    // Apply filters to the fetched data
-  const filteredData = state.fetchedData.filter((wine) => {
-    // Apply sellerName filter
-    if (filters.sellerName.length > 0 && !filters.sellerName.includes(wine.wine_seller)) {
-      return false;
-    }
+    const filteredData = state.fetchedData.filter((wine) => {
+      // Apply sellerName filter
+      if (filters.sellerName.length > 0 && !filters.sellerName.includes(wine.wine_seller)) {
+        return false;
+      }
 
-    // Apply ratingRange filter
-    const wineRating = parseFloat(wine?.ratings || "0");
-    if (filters?.ratingRange?.length > 0 && (filters?.ratingRange[0] > wineRating || wineRating > filters.ratingRange[1])) {
-      return false;
-    }
+      // Apply ratingRange filter
+      const wineRating = parseFloat(wine?.ratings || "0");
+      if (filters?.ratingRange?.length > 0 && (filters?.ratingRange[0] > wineRating || wineRating > filters.ratingRange[1])) {
+        return false;
+      }
 
-    // Apply countries filter
-    if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
-      return false;
-    }
+      // Apply countries filter
+      if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
+        return false;
+      }
 
-    // Apply grape filter
-    if (filters.grape?.length > 0 && !filters.grape.includes(wine.grape)) {
-      return false;
-    }
+      // Apply grape filter
+      if (filters.grape?.length > 0 && !filters.grape.includes(wine.grape)) {
+        return false;
+      }
 
+      // Apply priceRange filter
     // Apply priceRange filter
-   // Apply priceRange filter
-   if (filters.priceRange.length > 0) {
-    const winePrice = parseFloat(wine.current_price);
-    if (
-      !filters.priceRange.some(
-        ([minPrice, maxPrice]) => minPrice <= winePrice && winePrice <= maxPrice
-      )
-    ) {
-      return false;
+    if (filters.priceRange.length > 0) {
+      const winePrice = parseFloat(wine.current_price);
+      if (
+        !filters.priceRange.some(
+          ([minPrice, maxPrice]) => minPrice <= winePrice && winePrice <= maxPrice
+        )
+      ) {
+        return false;
+      }
     }
-  }
 
-  const priceRangeCounts = countWinesInPriceRanges(filteredWines, priceRangeOptions);
+    const priceRangeCounts = countWinesInPriceRanges(filteredWines, priceRangeOptions);
 
-    // All filters passed
-    return true;
-  });
+      // All filters passed
+      return true;
+    });
 
     setFilteredWines(filteredData);
 
-  // },[filters.countries, filters.sellerName, filters.grape, filters.priceRange[0], filters.priceRange[1], filters.sellerName, filters.ratingRange[0], filters.ratingRange[1]])
+  }
 
-  },[filters.sellerName, filters.priceRange[0], filters.priceRange[1], filters.sellerName, filters.ratingRange[0], filters.ratingRange[1]])
+  const resetFiltersFunc = () => {
+    setFilters({
+      sellerName : [],
+      wineName : '',
+      priceRange : [],
+      ratingRange: [0,5],
+      countries  : [],
+      grape      : [],
+    })
+
+    setFilteredWines(state.fetchedData)
+  }
 
   const countWinesInPriceRanges = (wines, priceRangeOptions) => {
     const countMap = {};
@@ -390,20 +264,9 @@ const ListingComponent = ({state, setState}) => {
 
   return(
     <div id="ListingComponent">
-        <h2 className='Heading26M pt_40'>Showing Results for <span className='Heading28B'>{filteredWines.length}</span> wines</h2>
-        {filteredWines.length > 0 && (
-        <h3 className="Heading16M">
-          Showing wines{' '}
-            Showing Results for {filteredWines.length} wines,
-            selled by {filters.sellerName.length > 0 ? filters.sellerName.join(', ') : 'any' },
-            ranging from {filters.priceRange.length > 0 ? filters.priceRange[0][0] : 'any'},
-            to {filters.priceRange.length > 0 ? filters.priceRange[filters.priceRange.length - 1][1] : 'any'} EUR,
-            ratings from {filters.ratingRange[0]} to {filters.ratingRange[1]},
-            in countries {filters.countries.length > 0 ? filters.countries.join(', ') : 'any'},
-            and grape {filters.grape.length > 0 ? filters.grape.join(', ') : 'any'}.
-        </h3>
-        )}
-        <div className='mt_24'>
+      <div className="topSectionSticky">
+        <h2 className='Heading22B pt_40'>Showing Results for {filteredWines.length} wines</h2>
+        <div className='mt_24 singleLineFilter'>
           <div className='filterTitle Heading18M' onClick={()=>setState({...state, smallScreenFilter : !state.smallScreenFilter})}>
             Filters
           </div>
@@ -411,15 +274,20 @@ const ListingComponent = ({state, setState}) => {
               <h2 className='Heading22B'>
                 Search Wine
               </h2>
+            <div className="position-relative">
             <TextField 
              variant="standard"
-             className='w-40 pr_32 searchField'
+             className='w-100 pr_32 searchField'
              onChange={(e)=>handleNameChange(e)}
              value = {filters.wineName}
             />
+            <span className="deleteIcon cp" onClick={()=>{setFilters({ ...filters, wineName : ""}); applyFiltersFunction(); }}>
+              <DeleteOutline/>
+            </span>
+            </div>
           </div>
         </div>
-
+      </div>
         
         <div className='d-flex space-between'>
             <div className={`leftSection ${state.smallScreenFilter && 'filterAppliedBox'}`}>
@@ -429,7 +297,7 @@ const ListingComponent = ({state, setState}) => {
                 Seller Name
               </h2>
               {state.smallScreenFilter &&
-              <div onClick={()=>setState({...state, smallScreenFilter : false})}>
+              <div className='closeIconFilter' onClick={()=>setState({...state, smallScreenFilter : false})}>
                 <SvgIcons.CloseIcon color={ColorScheme.ColorSchemeCode.black}/>
               </div>}
             </div>
@@ -484,44 +352,21 @@ const ListingComponent = ({state, setState}) => {
                   aria-labelledby   = "range-slider"
                   max               = {5}
                 />
-              </div>
-
-              {/* <h2 className='Heading22B mt_60'>
-                Country
-              </h2>
-              <Autocomplete
-                  multiple
-                  id             = "tags-standard"
-                  options        = {uniqueCountryNames}
-                  getOptionLabel={(option) => option}
-                  onChange={(e, value)=>setFilters({...filters, countries : value})}
-                  renderInput    = {(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      label="Select"
-                    />
-                  )}
-                /> */}
-
-              {/* <h2 className='Heading22B mt_60'>
-                Grape
-              </h2>
-              <div className='price-buttons'>
-                {uniqueGrapeNames.map((grape) => (
-                  <button
-                    key={grape}
-                    className={
-                      filters.grape.includes(grape)
-                        ? 'price selected'
-                        : 'price'
-                    }
-                    onClick={() => handleChangeGrape(grape)}
-                  >
-                    {grape}
-                </button>
-              ))}
-            </div> */}
+            </div>
+            <div className='mt_24 d-flex space-between'>
+                <CustomButton 
+                  className="w-48"
+                  btntext={"Apply Filters"}
+                  padding= "xl"
+                  onClick={applyFiltersFunction}
+                />
+                 <CustomButton 
+                  className="w-48 resetBtn"
+                  btntext={"Reset Filters"}
+                  variant="dangerTertiary"
+                  onClick={resetFiltersFunc}
+                />
+            </div>
             </div>
             <div className='rightSection'>
               {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
