@@ -13,6 +13,7 @@ import { ColorScheme } from '../../enums'
 import { Link } from 'react-router-dom'
 import { DeleteOutline, Visibility } from '@mui/icons-material'
 import CustomButton from './../../components/CustomButton';
+import localforage from 'localforage';
 
 export default function WainoExplorer() {
   const layout = useContext(LayoutContext)
@@ -33,13 +34,18 @@ export default function WainoExplorer() {
 
 
   const onLoadFunc = async() => {
+        let prevData = await localforage.getItem('wines');
+        if(prevData){
+          setState({...state, mainLoader : false, fetchedData : prevData})
+        }
+
         const {response , error} = await AuthService.FetchData();
         let filteredData = [];
         if(response.data){
           filteredData = await sortByRating(response.data)
         }
-
         console.log('filteredData ', filteredData)
+        await localforage.setItem('wines', filteredData)
         setState({...state, mainLoader : false, fetchedData : filteredData})
   }
 
