@@ -206,8 +206,7 @@ const ListingComponent = ({state, setState}) => {
       }
     }
 
-    const priceRangeCounts = countWinesInPriceRanges(filteredWines, priceRangeOptions);
-
+    setState({...state, smallScreenFilter : false})
       // All filters passed
       return true;
     });
@@ -225,7 +224,7 @@ const ListingComponent = ({state, setState}) => {
       countries  : [],
       grape      : [],
     })
-
+    setState({...state, smallScreenFilter : false})
     setFilteredWines(state.fetchedData)
   }
 
