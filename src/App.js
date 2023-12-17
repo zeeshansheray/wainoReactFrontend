@@ -4,6 +4,7 @@ import LayoutContextProvider, { LayoutContext } from './context/layout.context';
 import { withToaster } from './context/Toaster.context';
 
 import CustomToasters from './components/CustomToasters';
+import OutsetaLoginWidget from './components/Outseawidget';
 
 import {
   BrowserRouter,
@@ -28,6 +29,7 @@ function App(props) {
         <BrowserRouter>
             <CustomToasters/>
             <Navbar/>
+            <OutsetaLoginWidget />
             <Routes>
               <Route exact path  = "/" element                     = {<MainPage/>}/>
               <Route exact path  = "waino-explorer" element                     = {<WainoExplorer/>}/>

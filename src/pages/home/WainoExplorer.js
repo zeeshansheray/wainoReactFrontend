@@ -34,10 +34,10 @@ export default function WainoExplorer() {
 
 
   const onLoadFunc = async() => {
-        let prevData = await localforage.getItem('wines');
-        if(prevData){
-          setState({...state, mainLoader : false, fetchedData : prevData})
-        }
+        // let prevData = await localforage.getItem('wines');
+        // if(prevData){
+        //   setState({...state, mainLoader : false, fetchedData : prevData})
+        // }
 
         const {response , error} = await AuthService.FetchData();
         let filteredData = [];
@@ -293,6 +293,7 @@ const ListingComponent = ({state, setState}) => {
           </div>
         </div>
       </div>
+      
         
         <div className='d-flex space-between'>
             <div className={`leftSection ${state.smallScreenFilter && 'filterAppliedBox'}`}>
