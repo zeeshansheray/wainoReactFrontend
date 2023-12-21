@@ -3,28 +3,19 @@ import { Helmet } from 'react-helmet';
 
 const OutsetaLoginWidget = () => {
   useEffect(() => {
-    // Your Outseta script here
-    var o_login_options = {
-      "id": "Outseta",
-      "domain": "waino.outseta.com",
-      "load": "auth",
-      "auth": {
-        "widgetMode": "login",
-        "id": "login_embed",
-        "mode": "embed",
-        "selector": "#login-embed"
-      }
+    var o_options = {
+      domain: 'waino.outseta.com',
+      load: 'nocode'
     };
 
     const script = document.createElement('script');
     script.src = 'https://cdn.outseta.com/outseta.min.js';
-    script.dataset.options = JSON.stringify(o_login_options);
+    script.dataset.options = JSON.stringify(o_options);
     script.async = true;
 
     document.getElementById('login-embed').appendChild(script);
 
     return () => {
-      // Cleanup script when component unmounts
       document.getElementById('login-embed').removeChild(script);
     };
   }, []);
