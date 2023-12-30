@@ -9,7 +9,6 @@ const FetchData = async() => await axios.get(env.API_URL + '/getData')
 const AuthService = {
     Login    : Handlers.Services(Login),
     FetchData: Handlers.Services(FetchData),
-
 }
 
 export default AuthService

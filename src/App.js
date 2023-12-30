@@ -19,6 +19,7 @@ import WainoExplorer from './pages/home/WainoExplorer';
 import { useContext, useEffect } from 'react';
 import About from './pages/home/About';
 import Profile from './pages/home/Profile';
+import Admin from './pages/admin/Admin';
 
 
 function App(props) {
@@ -35,6 +36,7 @@ function App(props) {
               <Route exact path  = "waino-explorer" element                     = {<WainoExplorer/>}/>
               <Route exact path  = "about" element                     = {<About/>}/>
               <Route exact path  = "profile" element                     = {<Profile/>}/>
+              <Route exact path  = "admin" element                     = {<Admin/>}/>
               <Route path="*" element={<MainPage/>} />
             </Routes>
           {/* <Footer/> */}

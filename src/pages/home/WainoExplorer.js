@@ -34,10 +34,10 @@ export default function WainoExplorer() {
 
 
   const onLoadFunc = async() => {
-        // let prevData = await localforage.getItem('wines');
-        // if(prevData){
-        //   setState({...state, mainLoader : false, fetchedData : prevData})
-        // }
+        let prevData = await localforage.getItem('wines');
+        if(prevData){
+          setState({...state, mainLoader : false, fetchedData : [...prevData]})
+        }
 
         const {response , error} = await AuthService.FetchData();
         let filteredData = [];
@@ -46,7 +46,7 @@ export default function WainoExplorer() {
         }
         console.log('filteredData ', filteredData)
         await localforage.setItem('wines', filteredData)
-        setState({...state, mainLoader : false, fetchedData : filteredData})
+        setState({...state, mainLoader : false, fetchedData : [...filteredData]})
   }
 
   function sortByRating(data) {
