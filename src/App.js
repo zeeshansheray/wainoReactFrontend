@@ -29,7 +29,7 @@ function App(props) {
         <BrowserRouter>
             <CustomToasters/>
             <Navbar/>
-            <OutsetaLoginWidget />
+            {/* <OutsetaLoginWidget /> */}
             <Routes>
               <Route exact path  = "/" element                     = {<MainPage/>}/>
               <Route exact path  = "waino-explorer" element                     = {<WainoExplorer/>}/>
