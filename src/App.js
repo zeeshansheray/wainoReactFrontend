@@ -34,11 +34,10 @@ function App(props) {
             {/* <OutsetaLoginWidget /> */}
             <Routes>
               <Route exact path  = "/" element                     = {<WainoExplorer/>}/>
-              <Route exact path  = "/discount" element                     = {<DiscountWainoExplorer/>}/>
+              <Route exact path  = "discount" element                     = {<DiscountWainoExplorer/>}/>
               <Route exact path  = "about" element                     = {<About/>}/>
               <Route exact path  = "profile" element                     = {<Profile/>}/>
               <Route exact path  = "admin" element                     = {<Admin/>}/>
-              <Route path="*" element={<MainPage/>} />
             </Routes>
           {/* <Footer/> */}
         </BrowserRouter>

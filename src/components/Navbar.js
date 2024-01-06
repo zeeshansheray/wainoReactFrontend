@@ -18,7 +18,7 @@ const Navbar = () => {
     },
     {
       title: "Waino Explorer",
-      url: "waino-explorer",
+      url: "",
       cName: "nav-links"
     },
     {
