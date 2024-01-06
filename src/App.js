@@ -32,8 +32,7 @@ function App(props) {
             <Navbar/>
             {/* <OutsetaLoginWidget /> */}
             <Routes>
-              <Route exact path  = "/" element                     = {<MainPage/>}/>
-              <Route exact path  = "waino-explorer" element                     = {<WainoExplorer/>}/>
+              <Route exact path  = "/" element                     = {<WainoExplorer/>}/>
               <Route exact path  = "about" element                     = {<About/>}/>
               <Route exact path  = "profile" element                     = {<Profile/>}/>
               <Route exact path  = "admin" element                     = {<Admin/>}/>

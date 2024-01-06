@@ -228,5 +228,14 @@
       }
     }
   }
+
+  @media screen and (min-width: 600px){
+    .ratingFix{
+      position: absolute;
+      padding-top: 50px;
+      left: 500px;
+      width: 200px;
+    }
+  }
   
   

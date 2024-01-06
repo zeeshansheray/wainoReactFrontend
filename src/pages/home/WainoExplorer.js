@@ -104,6 +104,7 @@ const ListingComponent = ({state, setState}) => {
     ratingRange: [0,5],
     countries  : [],
     grape      : [],
+    discountCheck: false,
   })
 
   const [filteredWines, setFilteredWines] = useState(state.fetchedData)
@@ -186,6 +187,10 @@ const ListingComponent = ({state, setState}) => {
       // Apply countries filter
       if (filters.countries.length > 0 && !filters.countries.includes(wine.country)) {
         return false;
+      }
+
+      if(filters.discountCheck && !wine?.discounted_price){
+        return false
       }
 
       // Apply grape filter
@@ -359,6 +364,18 @@ const ListingComponent = ({state, setState}) => {
                   max               = {5}
                 />
             </div>
+            <h2 className='Heading22B mt_60 d-flex space-between align-items-center'>
+                Discount
+            </h2>
+            <div className='d-flex mb_8'>
+              <input
+                type="checkbox"
+                label={'Show Discounted Wines'}
+                value={filters.discountCheck}
+                onChange={(e)=>setFilters({...filters, discountCheck : !filters.discountCheck})}
+              />
+              <span className='ml_10'>Show Discounted Only</span>
+            </div>
             <div className='mt_24 d-flex space-between'>
                 <CustomButton 
                   className="w-48"
@@ -377,8 +394,27 @@ const ListingComponent = ({state, setState}) => {
             <div className='rightSection'>
               {(filteredWines).map((wine)=><div className="card mb-3 position-relative">
                 <div className="row no-gutters">
-                  <div className="col-md-3">
+                  <div className="col-md-3 pr_16 d-flex space-between">
                     <img src={wine.image_url} style={{objectFit : 'contain'}} width={'100%'} height={210} className="card-img" alt="..." />
+                    <div className='middle ratingFix'>
+                        <div className='d-flex align-items-center'>
+                          <div className='Heading14B pr_8'>
+                            Vivino <br/> Rating:
+                          </div>
+                          <div className="middle">
+                          <p className='Heading24M'>
+                            {!Number.isNaN(Number(wine.ratings)) ?  wine.ratings : ''}
+                        </p>
+                        <div style={{marginTop : '-10px'}}>
+                          {!Number.isNaN(Number(wine.ratings)) &&   <StarRating rating={parseFloat(wine.ratings)} />}
+                        </div>
+                        <p  className='Caption12M'>{wine.Number_of_ratings_Vivino}</p>
+                          </div>
+                        </div>
+                        {wine?.discounted_price && <div className='discountBox mt_16'>
+                          <span className="Heading14B ">Discount:</span> <span className='Body14R'>{wine?.discounted_price}<span className='ml_8'>{wine?.discount_description}</span></span>
+                        </div>}
+                    </div>
                   </div>
                   <div className="col-md-9">
                     <div className="card-body">
@@ -400,23 +436,7 @@ const ListingComponent = ({state, setState}) => {
                               Buy this wine
                             </Link>}
                             </div>
-                        </div>
-                        <div className='middle'>
-                          <div className='d-flex align-items-center'>
-                            <div className='Heading14B pr_8'>
-                              Vivino <br/> Rating:
-                            </div>
-                            <div className="middle">
-                            <p className='Heading24M'>
-                              {!Number.isNaN(Number(wine.ratings)) ?  wine.ratings : ''}
-                          </p>
-                          <div style={{marginTop : '-10px'}}>
-                            {!Number.isNaN(Number(wine.ratings)) &&   <StarRating rating={parseFloat(wine.ratings)} />}
-                          </div>
-                          <p  className='Caption12M'>{wine.Number_of_ratings_Vivino}</p>
-                            </div>
-                          </div>
-                        </div>
+                        </div>                    
                       </div>
                     </div>
                   </div>
